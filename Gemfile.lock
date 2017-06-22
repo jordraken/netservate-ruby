@@ -1,0 +1,25 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    httparty (0.15.5)
+      multi_xml (>= 0.5.2)
+    mail (2.6.6)
+      mime-types (>= 1.16, < 4)
+    mime-types (3.1)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2016.0521)
+    multi_xml (0.6.0)
+    parseconfig (1.0.8)
+    speedtest (0.2.3)
+      httparty (~> 0.13)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  mail
+  parseconfig
+  speedtest
+
+BUNDLED WITH
+   1.15.0

@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+
+# Check if bundler is installed and install gems.
+begin
+  puts "Checking for Bundler..."
+  gem "bundler"
+  puts "Installing needed gems with Bundler..."
+  system('bundle install')
+rescue Gem::LoadError
+  puts "Bundler missing - installing now..."
+  system('gem install bundler')
+  puts "Installing gems with Bundler..."
+  system('bundle install')
+end
+
+# After gems installed - check if user wants to run program.
+run_program = false
+while true do
+  print "Would you like to run Netservate now? (Y/N): "
+  input = gets.chomp.to_s.downcase
+  if ['y','yes'].include?(input)
+    run_program = true
+    break
+  elsif ['n','no'].include?(input)
+    puts "Quitting..."
+    break
+  end
+end
+
+# If yes - run program.
+if run_program
+  system('ruby ./lib/netservate.rb')
+end

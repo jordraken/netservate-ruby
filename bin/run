@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+# Setup
+require './config/initializers/mail'
+
+# Application
+require './lib/netservate'
+
+# Run application
+app = Netservate.new
+app.run

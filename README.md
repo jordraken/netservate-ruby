@@ -13,7 +13,7 @@ ruby -v
 If not, install with RVM (https://rvm.io/rvm/install) or using:
 
 ```
-sudo apt-get install ruby
+apt-get install ruby
 ```
 
 Once ruby is installed, download Netservate, unzip if necessary, and use the following commands to do the initial setup:

@@ -1,13 +1,13 @@
 require 'mail'
 require 'parseconfig'
 
-config = ParseConfig.new('./config/mail.conf')
+config = ParseConfig.new('./config/netservate.conf')
 
-options = { :address              => config['server'],
-            :port                 => config['port'],
+options = { :address              => config['EMAIL']['SERVER'],
+            :port                 => config['EMAIL']['PORT'],
             :domain               => 'localhost',
-            :user_name            => config['username'],
-            :password             => config['password'],
+            :user_name            => config['EMAIL']['USERNAME'],
+            :password             => config['EMAIL']['PASSWORD'],
             :authentication       => 'plain',
             :enable_starttls_auto => true  }
 

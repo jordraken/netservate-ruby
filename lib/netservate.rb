@@ -10,7 +10,7 @@ class Netservate
   def main
     print "Running Netservate...\n"
     while true do
-      test = Speedtest::Test.new
+      test = Speedtest::Test.new()
       results = test.run
       puts "-" * 20
       puts "Server: " + results.server

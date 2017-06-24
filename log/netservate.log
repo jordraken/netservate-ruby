@@ -1,0 +1,56 @@
+I, [2017-06-23T23:58:27.758731 #18625]  INFO -- : 
+Server: http://speedtest.catt.com
+Download rate: 67.06 Mbps
+Upload rate: 19.80 Mbps
+Latency: 46.19216925
+Time: Fri Jun 23 23:58:12 2017
+
+I, [2017-06-23T23:58:52.987366 #18793]  INFO -- : 
+Server: http://speedtest.catt.com
+Download rate: 69.12 Mbps
+Upload rate: 19.71 Mbps
+Latency: 50.009574
+Time: Fri Jun 23 23:58:42 2017
+
+I, [2017-06-23T23:59:03.650819 #18793]  INFO -- : 
+Server: http://speedtest.catt.com
+Download rate: 99.20 Mbps
+Upload rate: 19.81 Mbps
+Latency: 47.13787825
+Time: Fri Jun 23 23:58:53 2017
+
+I, [2017-06-23T23:59:15.894540 #18793]  INFO -- : 
+Server: http://speedtest.catt.com
+Download rate: 53.92 Mbps
+Upload rate: 18.90 Mbps
+Latency: 45.442093750000005
+Time: Fri Jun 23 23:59:04 2017
+
+I, [2017-06-23T23:59:26.646257 #18793]  INFO -- : 
+Server: http://speedtest.catt.com
+Download rate: 107.13 Mbps
+Upload rate: 19.24 Mbps
+Latency: 48.30875875
+Time: Fri Jun 23 23:59:16 2017
+
+I, [2017-06-23T23:59:37.935732 #18793]  INFO -- : 
+Server: http://speedtest.catt.com
+Download rate: 78.07 Mbps
+Upload rate: 19.85 Mbps
+Latency: 50.155620250000005
+Time: Fri Jun 23 23:59:27 2017
+
+I, [2017-06-23T23:59:48.470462 #18793]  INFO -- : 
+Server: http://speedtest.catt.com
+Download rate: 106.94 Mbps
+Upload rate: 19.75 Mbps
+Latency: 51.9763575
+Time: Fri Jun 23 23:59:38 2017
+
+I, [2017-06-23T23:59:59.581657 #18793]  INFO -- : 
+Server: http://speedtest.catt.com
+Download rate: 83.15 Mbps
+Upload rate: 19.71 Mbps
+Latency: 46.929323000000004
+Time: Fri Jun 23 23:59:49 2017
+

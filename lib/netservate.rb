@@ -1,7 +1,9 @@
 require 'speedtest'
+require 'webrick'
 require 'mail'
 require 'parseconfig'
 require './lib/mailer'
+require './lib/html_updater'
 
 class Netservate
   # Initialization method.
@@ -31,12 +33,6 @@ class Netservate
         "Latency: #{net_results.latency}\n"\
         "Time: #{test_time}\n"
       puts result_text
-      # Log results
-      begin
-        logger = Logger.new('./log/netservate.log', 10, 1024000)
-        logger.info result_text
-      rescue
-      end
       # Store results in array
       if @results.length >= 20
         @results.shift # Remove first result if 20
@@ -47,6 +43,15 @@ class Netservate
         upload: net_results.pretty_upload_rate,
         time: test_time
       })
+      # Log results
+      begin
+        logger = Logger.new('./log/netservate.log', 10, 1024000)
+        logger.info result_text
+        html_update = HTMLUpdater.new
+        html_update.append_result(@results.last)
+      rescue => error
+        puts "ERROR: " + error
+      end
       # Check criteria
       if (net_results.pretty_download_rate.to_f < @config['NETSERVATE']['MIN_DOWNLOAD_SPEED'].to_f) ||
         (net_results.pretty_upload_rate.to_f < @config['NETSERVATE']['MIN_UPLOAD_SPEED'].to_f)
@@ -72,6 +77,7 @@ class Netservate
       else
         @failed_test_count = 0
         puts "Test meets criteria."
+        puts "\nNext test in #{@wait_time} seconds..."
         # Wait before next loop
         sleep(@wait_time)
       end
@@ -105,13 +111,10 @@ class Netservate
 
   # Listen for inputs while running tests.
   def input_listener
-    print "Enter 'Q' to quit...\n"
+    print "'Ctrl-C' to quit...\n"
     while true do
       input = gets.chomp.to_s.downcase
-      if ['q', 'quit'].include?(input)
-        print "Quitting...\n"
-        exit
-      elsif ['average'].include?(input)
+      if ['average'].include?(input)
         average_download = 0.0
         average_upload = 0.0
         if @results.length > 0
@@ -133,12 +136,23 @@ class Netservate
     end
   end
 
+  def web_server
+      if @config['NETSERVATE']['WEB_UI'].to_s == 'true'
+        system('xdg-open http://localhost:8000')
+        root = File.expand_path './public'
+        server = WEBrick::HTTPServer.new :AccessLog => [], :Logger => WEBrick::Log::new("/dev/null", 7), :Port => 8000, :DocumentRoot => root
+        server.start
+      end
+  end
+
   # Create and join threads. Run program.
   def run
     input_listener_thread = Thread.new{input_listener();}
     main_thread = Thread.new{main();}
+    server_thread = Thread.new{web_server();}
     input_listener_thread.join
     main_thread.join
+    server_thread.join
   end
 
 end

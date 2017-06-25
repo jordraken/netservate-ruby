@@ -7,5 +7,10 @@ require './config/initializers/mail'
 require './lib/netservate'
 
 # Run application
-app = Netservate.new
-app.run
+begin
+  app = Netservate.new
+  app.run
+rescue Interrupt
+  puts "\nShutting down..."
+  exit
+end

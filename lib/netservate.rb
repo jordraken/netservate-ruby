@@ -46,8 +46,6 @@ class Netservate
       begin
         logger = Logger.new('./log/netservate.log', 10, 1024000)
         logger.info result_text
-        html_update = HTMLUpdater.new
-        html_update.append_result(@results.last)
       rescue => error
         puts "ERROR: " + error
       end

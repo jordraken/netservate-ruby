@@ -1650,3 +1650,17 @@ Upload rate: 19.40 Mbps
 Latency: 46.12800875
 Time: Sat Jun 24 22:26:11 2017
 
+I, [2017-06-25T17:20:37.696998 #8149]  INFO -- : 
+Server: http://speedtest.catt.com
+Download rate: 68.43 Mbps
+Upload rate: 18.98 Mbps
+Latency: 46.1462235
+Time: Sun Jun 25 17:20:27 2017
+
+I, [2017-06-25T21:24:52.225602 #17265]  INFO -- : 
+Server: http://speedtest.catt.com
+Download rate: 103.96 Mbps
+Upload rate: 18.00 Mbps
+Latency: 47.362748
+Time: Sun Jun 25 21:24:41 2017
+

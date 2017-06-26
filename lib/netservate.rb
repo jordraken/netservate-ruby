@@ -3,7 +3,6 @@ require 'webrick'
 require 'mail'
 require 'parseconfig'
 require './lib/mailer'
-require './lib/html_updater'
 
 class Netservate
   # Initialization method.
@@ -136,23 +135,12 @@ class Netservate
     end
   end
 
-  def web_server
-      if @config['NETSERVATE']['WEB_UI'].to_s == 'true'
-        system('xdg-open http://localhost:8000')
-        root = File.expand_path './public'
-        server = WEBrick::HTTPServer.new :AccessLog => [], :Logger => WEBrick::Log::new("/dev/null", 7), :Port => 8000, :DocumentRoot => root
-        server.start
-      end
-  end
-
   # Create and join threads. Run program.
   def run
     input_listener_thread = Thread.new{input_listener();}
     main_thread = Thread.new{main();}
-    server_thread = Thread.new{web_server();}
     input_listener_thread.join
     main_thread.join
-    server_thread.join
   end
 
 end

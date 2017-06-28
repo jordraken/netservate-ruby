@@ -185,5 +185,6 @@ Logs can be found in `path/to/netservate/log/netservate.log`
 ## Updating
 
 You can download new updates from GitHub at anytime. If you do - be sure to save
-your config folder and replace the default config with your own, unless you want
-to walk through the config process again.
+your config folder `path/to/netservate/config` and replace the default config that
+comes with the new download with your own, unless you want to walk through the
+config process again.

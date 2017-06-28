@@ -18,7 +18,8 @@ loop do
   input = gets.chomp.to_s.downcase
   if ['y', 'yes'].include?(input)
     print "\n"
-    exec('ruby ./config/scripts/config.rb')
+    config_walkthrough_path = "#{__dir__}/scripts/config.rb"
+    exec("ruby #{config_walkthrough_path}")
     break
   elsif ['n', 'no'].include?(input)
     break

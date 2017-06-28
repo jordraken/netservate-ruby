@@ -5,12 +5,12 @@ def get_input
   return input
 end
 
-config = ParseConfig.new('./config/netservate.conf')
+config_path = "#{File.expand_path("../..", __dir__)}/config/netservate.conf"
+config = ParseConfig.new(config_path)
+puts "Config file found in:\n#{config_path}"
 
 # Begin config process
 puts "Beginning Netservate configuration process..."
-
-
 
 # Email config
 loop do
@@ -133,7 +133,7 @@ end
 puts "\nApplying new settings to config file..."
 
 # Write changes to file
-file = File.open('./config/netservate.conf', 'w')
+file = File.open(config_path, 'w')
 config.write(file)
 file.close
 

@@ -4,6 +4,10 @@ Netservate is a simple ruby program that runs network speed tests, logs the resu
 
 ## Installation
 
+For now, you can download Netservate by cloning from the GitHub repo or
+by downloading the zip file using the green "Clone or download" button on
+the main GitHub page.
+
 First, open a terminal and check if ruby is installed on your system:
 
 ```

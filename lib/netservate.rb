@@ -2,11 +2,13 @@ require 'speedtest'
 require 'webrick'
 require 'mail'
 require 'parseconfig'
-require "#{__dir__}/mailer"
+require "#{__dir__}/netservate"
 
 class Netservate
+
   # Initialization method.
   def initialize(options = {})
+    @version = "0.1.0"
     @root_path = File.expand_path("..", __dir__)
     config_path = "#{@root_path}/config/netservate.conf"
     @config = ParseConfig.new(config_path)
@@ -19,7 +21,7 @@ class Netservate
 
   # Main thread - run netspeed tests.
   def main
-    puts "Running Netservate..."
+    puts "Running Netservate #{@version}..."
     # Main loop
     while true do
       # Run test
@@ -113,22 +115,8 @@ class Netservate
     print "'Ctrl-C' to quit...\n"
     while true do
       input = gets.chomp.to_s.downcase
-      if ['average'].include?(input)
-        average_download = 0.0
-        average_upload = 0.0
-        if @results.length > 0
-          @results.each do |result|
-            average_download += result[:download].to_f
-            average_upload += result[:upload].to_f
-          end
-          average_download = (average_download / @results.length).round(3)
-          average_upload = (average_upload / @results.length).round(3)
-          puts "\nFor the last #{@results.length} results..."
-          puts "Download: #{average_download.to_s} Mbps"
-          puts "Upload: #{average_upload.to_s} Mbps"
-        else
-          puts "\nThere are no results to average."
-        end
+      if ['v','version'].include?(input)
+        puts "Netservate #{@version}"
       else
         puts "\nNot a valid input."
       end

@@ -4,7 +4,9 @@ require 'parseconfig'
 class Mailer
 
   def initialize
-    @config = ParseConfig.new('./config/netservate.conf')
+    @root_path = File.expand_path("..", __dir__)
+    config_path = "#{@root_path}/config/netservate.conf"
+    @config = ParseConfig.new(config_path)
     @queued_emails = []
     # Mail setup
     @mail = Mail.new()

@@ -1,10 +1,11 @@
 #!/usr/bin/env ruby
 
 # Setup
-require './config/initializers/mail'
+@root_path = File.expand_path("..", __dir__)
+require "#{@root_path}/config/initializers/mail"
 
 # Application
-require './lib/netservate'
+require "#{@root_path}/lib/netservate"
 
 # Run application
 begin

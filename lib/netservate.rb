@@ -2,12 +2,14 @@ require 'speedtest'
 require 'webrick'
 require 'mail'
 require 'parseconfig'
-require './lib/mailer'
+require "#{__dir__}/mailer"
 
 class Netservate
   # Initialization method.
   def initialize(options = {})
-    @config = ParseConfig.new('./config/netservate.conf')
+    @root_path = File.expand_path("..", __dir__)
+    config_path = "#{@root_path}/config/netservate.conf"
+    @config = ParseConfig.new(config_path)
     @wait_time = @config['NETSERVATE']['TEST_INTERVAL'].to_i || 900
     @fail_wait_time = @config['NETSERVATE']['TIME_AFTER_FAIL'].to_i || 60
     @failed_test_count = 0
@@ -44,7 +46,7 @@ class Netservate
       })
       # Log results
       begin
-        logger = Logger.new('./log/netservate.log', 10, 1024000)
+        logger = Logger.new("#{@root_path}/log/netservate.log", 10, 1024000)
         logger.info result_text
       rescue => error
         puts "ERROR: " + error

@@ -1,7 +1,8 @@
 require 'mail'
 require 'parseconfig'
 
-config = ParseConfig.new('./config/netservate.conf')
+@root_path = File.expand_path("../..", __dir__)
+config = ParseConfig.new("#{@root_path}/config/netservate.conf")
 
 options = { :address              => config['EMAIL']['SERVER'],
             :port                 => config['EMAIL']['PORT'],

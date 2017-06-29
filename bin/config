@@ -1,3 +1,4 @@
 #!/usr/bin/env ruby
+
 config_walkthrough_path = "#{__dir__}/scripts/config.rb"
 exec("ruby #{config_walkthrough_path}")

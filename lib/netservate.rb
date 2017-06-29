@@ -2,7 +2,7 @@ require 'speedtest'
 require 'webrick'
 require 'mail'
 require 'parseconfig'
-require "#{__dir__}/netservate"
+require "#{__dir__}/mailer"
 
 class Netservate
 

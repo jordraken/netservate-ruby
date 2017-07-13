@@ -2,13 +2,14 @@ require 'speedtest'
 require 'webrick'
 require 'mail'
 require 'parseconfig'
+require 'timeout'
 require "#{__dir__}/mailer"
 
 class Netservate
 
   # Initialization method.
   def initialize(options = {})
-    @version = "0.1.0"
+    @version = "0.1.1"
     @root_path = File.expand_path("..", __dir__)
     config_path = "#{@root_path}/config/netservate.conf"
     @config = ParseConfig.new(config_path)
@@ -22,66 +23,112 @@ class Netservate
   # Main thread - run netspeed tests.
   def main
     puts "Running Netservate #{@version}..."
+
     # Main loop
     while true do
-      # Run test
-      puts "\nBeginning network test..."
-      test_time = Time.now.strftime('%c')
-      test = Speedtest::Test.new()
-      net_results = test.run
-      # Print results
-      result_text = "\nServer: #{net_results.server}\n"\
-        "Download rate: #{net_results.pretty_download_rate}\n"\
-        "Upload rate: #{net_results.pretty_upload_rate}\n"\
-        "Latency: #{net_results.latency}\n"\
-        "Time: #{test_time}\n"
-      puts result_text
-      # Store results in array
-      if @results.length >= 20
-        @results.shift # Remove first result if 20
-      end
-      @results.push({
-        server: net_results.server,
-        download: net_results.pretty_download_rate,
-        upload: net_results.pretty_upload_rate,
-        time: test_time
-      })
-      # Log results
       begin
-        logger = Logger.new("#{@root_path}/log/netservate.log", 10, 1024000)
-        logger.info result_text
+
+        # Begin test
+        puts "\nBeginning network test..."
+        test_time = Time.now.strftime('%c')
+        test = Speedtest::Test.new()
+        net_results = nil
+
+        # Test
+        begin
+          Timeout.timeout(@config['NETSERVATE']['TEST_TIMEOUT'].to_i || 90) { net_results = test.run }
+        rescue
+          puts "Test timed out - assuming failure."
+        end
+
+        # Print/check results
+        download_checked = false
+        upload_checked = false
+        result_text = nil
+        if net_results != nil
+          download_checked = true if net_results.pretty_download_rate.to_i != 0
+          upload_checked = true if net_results.pretty_upload_rate.to_i != 0
+          result_text = "\nServer: #{net_results.server}\n"\
+            "Download rate: #{download_checked ? net_results.pretty_download_rate : "n/a"}\n"\
+            "Upload rate: #{upload_checked ? net_results.pretty_upload_rate : "n/a"}\n"\
+            "Latency: #{net_results.latency}\n"\
+            "Time: #{test_time}\n"
+          puts result_text
+          # Store results in array
+          if @results.length >= 20
+            @results.shift # Remove first result if 20
+          end
+          @results.push({
+            server: net_results.server,
+            download: download_checked ? net_results.pretty_download_rate : "n/a",
+            upload: upload_checked ? net_results.pretty_upload_rate : "n/a",
+            time: test_time
+          })
+        else
+          result_text = "\nServer: Test timed out.\n"\
+            "Download rate: n/a\n"\
+            "Upload rate: n/a\n"\
+            "Latency: n/a\n"\
+            "Time: #{test_time}\n"
+          puts result_text
+          # Store results in array
+          if @results.length >= 20
+            @results.shift # Remove first result if 20
+          end
+          @results.push({
+            server: "Test timed out.",
+            download: "n/a",
+            upload: "n/a",
+            time: test_time
+          })
+        end
+
+        # Log results
+        begin
+          logger = Logger.new("#{@root_path}/log/netservate.log", 10, 1024000)
+          logger.info result_text
+        rescue => error
+          puts "ERROR: " + error
+        end
+
+        # Check criteria
+        if (net_results == nil) ||
+          (net_results.pretty_download_rate.to_f < @config['NETSERVATE']['MIN_DOWNLOAD_SPEED'].to_f && download_checked) ||
+          (net_results.pretty_upload_rate.to_f < @config['NETSERVATE']['MIN_UPLOAD_SPEED'].to_f && upload_checked)
+          @failed_test_count += 1
+          puts "Test does not meet criteria. (#{@failed_test_count})"
+
+          # If too many fails in a row - send an alert.
+          if (@failed_test_count % @config['NETSERVATE']['FAILS_IN_A_ROW'].to_i == 0)
+            send_alert(
+              subject: "Netservate Alert",
+              message: "There have been #{@failed_test_count.to_s} failed network speed tests in a row."
+            )
+          end
+
+          # Wait before next loop - Reset if max fail count reached.
+          if @failed_test_count < @config['NETSERVATE']['MAX_FAILS_IN_A_ROW'].to_i
+            puts "\nNext test in #{@fail_wait_time} seconds..."
+            sleep(@fail_wait_time)
+          else
+            puts "\nMax fails in a row reached..."
+            puts "Next test in #{@wait_time} seconds..."
+            @failed_test_count = 0
+            sleep(@wait_time)
+          end
+
+        else
+          @failed_test_count = 0
+          puts "Test meets criteria."
+          puts "\nNext test in #{@wait_time} seconds..."
+          # Wait before next loop
+          sleep(@wait_time)
+        end
+
       rescue => error
         puts "ERROR: " + error
       end
-      # Check criteria
-      if (net_results.pretty_download_rate.to_f < @config['NETSERVATE']['MIN_DOWNLOAD_SPEED'].to_f) ||
-        (net_results.pretty_upload_rate.to_f < @config['NETSERVATE']['MIN_UPLOAD_SPEED'].to_f)
-        @failed_test_count += 1
-        puts "Test does not meet criteria. (#{@failed_test_count})"
-        # If too many fails in a row - send an alert.
-        if (@failed_test_count % @config['NETSERVATE']['FAILS_IN_A_ROW'].to_i == 0)
-          send_alert(
-            subject: "Netservate Alert",
-            message: "There have been #{@failed_test_count.to_s} failed network speed tests in a row."
-          )
-        end
-        # Wait before next loop - Reset if max fail count reached.
-        if @failed_test_count < @config['NETSERVATE']['MAX_FAILS_IN_A_ROW'].to_i
-          puts "\nNext test in #{@fail_wait_time} seconds..."
-          sleep(@fail_wait_time)
-        else
-          puts "\nMax fails in a row reached..."
-          puts "Next test in #{@wait_time} seconds..."
-          @failed_test_count = 0
-          sleep(@wait_time)
-        end
-      else
-        @failed_test_count = 0
-        puts "Test meets criteria."
-        puts "\nNext test in #{@wait_time} seconds..."
-        # Wait before next loop
-        sleep(@wait_time)
-      end
+
     end
   end
 
